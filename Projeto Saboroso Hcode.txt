@@ -21,7 +21,10 @@ problema de conexão do node com mysql: rodar esta query no workbench
 	ALTER USER 	'user'@'localhost' IDENTIFIED WITH mysql_native_passwort BY 'beluca18';
 
 npm install express-session --save connect-redis // para criar sessão de login- não usar em produção estamos usando o redis-- instalamos 2 comandos de uma vez
- senha de acesso redis: beluca18
+ senha de acesso redis: saboroso
+
+ tive problema com connect-redis, instalei a versão do curso npm install --save connect-redis@3.3.3
+ 
 
 
 

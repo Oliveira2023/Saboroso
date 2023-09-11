@@ -4,7 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
-//var redisStore = require('connect-redis')(session);
+var redisStore = require('connect-redis')(session);
+
 
 var indexRouter = require('./routes/index');
 var adminRouter = require('./routes/admin');
@@ -15,15 +16,17 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// app.use(session({
-//   store: new redisStore({
-//     host: 'localhost',
-//     port: 6379
-// }),
-//   secret: 'beluaca18',
-//   resave: true,
-//   saveUninitialized: true
-// }));
+app.use(
+  session({
+    store: new redisStore({
+      host: 'localhost',
+      port: 6379
+    }),
+    resave: true,
+    saveUninitialized: true,
+    secret: 'saboroso'
+  })
+);
 
 app.use(logger('dev'));
 app.use(express.json());
