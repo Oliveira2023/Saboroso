@@ -1,15 +1,27 @@
 var express = require('express');
 const user = require('../inc/user');
 var router = express.Router();
+var admin = require('../inc/admin');
+var menus = require('../inc/menus');
+var reservations = require('../inc/reservations');
+var moment = require('moment');
+
+moment.locale('pt-br')
 
 router.use(function(req, res, next){
-// console.log("URL: ",req.url) 
+
     if (['/login'].indexOf(req.url) === -1 && !req.session.user){
         res.redirect('/admin/login')
-        console.log('dentro do if', req.url)
     }else{
        next()
     }
+})
+
+router.use(function(req, res, next){
+    
+    req.menus = admin.getMenus(req)
+    next()
+
 })
 
 router.get('/logout', function(req, res, next){
@@ -21,18 +33,25 @@ router.get('/logout', function(req, res, next){
 
 router.get('/', function(req, res, next) {
    
-    res.render('admin/index', {
-        title: 'Admin - Restaurante Saboroso!'
-    });
+    admin.dashboard().then(data=>{
+        
+        res.render('admin/index', admin.getParams(req, {
+            title: 'Admin - Restaurante Saboroso!',
+            data
+        }))
+    }).catch(err=>{
+        console.error(err)
+    })
+    
     
 })
 
 router.get('/login', function(req, res, next){
 
-    res.render('admin/login', {
-        title: 'Login - Restaurante Saboroso!',
-        body: req.body
-    })
+        res.render('admin/login', admin.getParams(req, {
+            title: 'Admin - Restaurante Saboroso!',
+            //data
+        }))
 })
 
 router.post('/login', function(req, res, next){
@@ -59,46 +78,94 @@ router.post('/login', function(req, res, next){
 
 router.get('/emails', function(req, res, next){
 
-    res.render('admin/emails', {
+    res.render('admin/emails', admin.getParams(req, {
         title: 'Email - Restaurante Saboroso!'
-    })
-    
+    }))
 })
 
 router.get('/reservations', function(req, res, next){
+
+    reservations.getReservations().then(data=>{
+        
+        res.render('admin/reservations', admin.getParams(req, {
+            title: 'Reservations - Restaurante Saboroso!',
+            date: {},
+            data,
+            moment
+        }))
+    })
     
-    res.render('admin/reservations', {
-        title: 'Reservations - Restaurante Saboroso!',
-        date: {}
+})
+router.post('/reservations', function(req, res, next){
+
+    
+    menus.save(req.fields, req.files).then(results=>{
+        res.send(results)
+    }).catch(err=>{
+        res.send(err)
+    })
+})
+
+router.delete('/reservations/:id', function(req, res, next){
+
+    reservations.delete(req.params.id).then(results=>{
+
+        res.send(results)
+
+    }).catch(err=>{
+        
+        res.send(err)
     })
 })
 
 router.get('/services', function(req, res, next){
     
-    res.render('admin/services', {
+    res.render('admin/services', admin.getParams(req, {
         title: 'Services - Restaurante Saboroso!'
-    })
+    }))
 })
 
 router.get('/contacts', function(req, res, next){
     
-    res.render('admin/contacts', {
+    res.render('admin/contacts', admin.getParams(req, {
         title: 'Contacts - Restaurante Saboroso!'
-    })
+    }))
 })
 
 router.get('/menus', function(req, res, next){
     
-    res.render('admin/menus', {
-        title: 'Menus - Restaurante Saboroso!'
+    menus.getMenus().then(data=>{
+        
+        res.render('admin/menus', admin.getParams(req, {
+            title: 'Menus - Restaurante Saboroso!',
+            data
+        }))
+    })
+})
+
+router.post('/menus', function(req, res, next){
+
+    
+    menus.save(req.fields, req.files).then(results=>{
+        res.send(results)
+    }).catch(err=>{
+        res.send(err)
+    })
+})
+
+router.delete('/menus/:id', function(req, res, next){
+    menus.delete(req.params.id).then(results=>{
+        res.send(results)
+    }).catch(err=>{
+        
     })
 })
 
 router.get('/users', function(req, res, next){
     
-    res.render('admin/users', {
+    res.render('admin/users', admin.getParams(req, {
         title: 'Users - Restaurante Saboroso!'
-    })
+    }))
 })
 
 module.exports = router

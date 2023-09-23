@@ -25,6 +25,11 @@ npm install express-session --save connect-redis // para criar sessão de login-
 
  tive problema com connect-redis, instalei a versão do curso npm install --save connect-redis@3.3.3
  
+ codigo recuperação acesso Twilio:
+ oQ8ZHA7cj4x1QgMAAoWhu0a16FN73UKnt9CxHDU9
+
+ instalação do formidable:
+  npm install formidable --save //pra conectar com back end e enviar formulario de criar menu
 
 
 
