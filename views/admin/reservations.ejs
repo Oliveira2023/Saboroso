@@ -203,47 +203,17 @@
     <!-- Main Footer -->
     <%- include('inc/adm-footer.ejs') -%>
 
-    <script src="/js/hcode-formsave.js"></script>
+    <script src="../js/hcode-formsave.js"></script>
     <script src="/js/moment.min.js"></script>
+    <script src="../js/hcode-grid.js"></script>
     <script>
 
-    let formCreate = document.querySelector("#modal-create form");
+      new HcodeGrid({
+        deleteUrl: "/admin/reservations/${data.id}",
+        deleteMsg: "Tem certeza que deseja excluir a reserva de ${data.name}?",
+        onUpdateLoad: (form, name, data) => {
 
-      formCreate.save().then(json=>{
-
-        // window.location.reload()
-
-      }).catch(err=>{
-
-        console.log(err)
-
-      })
-      
-      let formUpdate = document.querySelector("#modal-update form");
-      
-      formUpdate.save().then(json=>{
-
-        // window.location.reload()
-
-      }).catch(err=>{
-
-        console.log(err)
-
-      })
-      btnUpdate = [...document.querySelectorAll('.btn-update')]
-      btnUpdate.forEach(btn =>{
-        btn.addEventListener("click", (e)=>{
-          // let tr = e.currentTarget.parentNode.parentNode//não encontra o path
-          let tr = e.composedPath()[2]
-          // let tr = e.path.find(el => {
-          //   return (el.tagName.toUpperCase() == "TR")
-          // })
-          let data = JSON.parse(tr.dataset.row)
-          // console.log(data)
-
-          for (let name in data) {
-
-            let input = formUpdate.querySelector(`[name="${name}"]`)
+          let input = form.querySelector(`[name="${name}"]`)
             
             switch (name) {
 
@@ -251,42 +221,12 @@
               console.log('caso date')
                 if (input) input.value = moment(data[name]).format("YYYY-MM-DD")
                 break
-
               default:
                 if (input) {
                   input.value = data[name]
                 }
             }
-
-            // formUpdate.querySelector(`[name="${name}"]`).value = data[name]
-
           }
-          $('#modal-update').modal('show')
-          // let tr = e.path.find(el => {
-          //   return (el.tagName.toUpperCase() == "TR")
-          // })
-          // console.log(tr)
-        })
-      })
-      let btnDelete = [...document.querySelectorAll('.btn-delete')]
-      btnDelete.forEach(btn =>{
-        btn.addEventListener("click", (e)=>{
-          // let tr = e.currentTarget.parentNode.parentNode//não encontra o path
-          let tr = e.composedPath()[2]
-          
-          let data = JSON.parse(tr.dataset.row)
-
-          if (confirm(`Tem certeza que deseja excluir a reserva ${data.name}?`)){
-            fetch(`/admin/reservations/${data.id}`,{
-              method: "delete"
-            }).then(res => res.json())
-              .then(json => {
-                // window.location.reload()
-
-                console.log(json)
-              })
-          }
-
-        })
       })
     </script>
+

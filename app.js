@@ -50,7 +50,8 @@ app.use(
 
 app.use(logger('dev'));
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));// pediu pra excluir esta linha, mas não entra no login sem ela, sem req.body
+// https://www.schoolofnet.com/forum/topico/reqbody-retorna-apenas-vazio-5413
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 

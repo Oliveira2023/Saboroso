@@ -58,6 +58,7 @@ router.post('/login', function(req, res, next){
     
     if (!req.body.email){
         user.render(req, res, "Digite o email")
+        
     }else if(!req.body.password){
         user.render(req, res, "Digite a senha")
     }else{
@@ -73,7 +74,7 @@ router.post('/login', function(req, res, next){
     }
 
 
-    //user.render(req, res, null, 'Login efetuado com sucesso!')
+    // user.render(req, res, null, 'Login efetuado com sucesso!')
 })
 
 router.get('/emails', function(req, res, next){
