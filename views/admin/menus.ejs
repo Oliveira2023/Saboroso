@@ -173,8 +173,19 @@
       })
 
       let formCreate = document.querySelector("#modal-create form");
-
+      
       formCreate.save().then(json=>{
+        // console.log(json)
+        // window.location.reload()
+
+      }).catch(err=>{
+
+        console.log(err)
+
+      })
+      let formUpdate = document.querySelector("#modal-update form");
+
+      formUpdate.save().then(json=>{
 
         // window.location.reload()
 
@@ -183,6 +194,28 @@
         console.log(err)
 
       })
+      btnDelete = [...document.querySelectorAll('.btn-delete')]
+      btnDelete.forEach(btn =>{
+        btn.addEventListener("click", (e)=>{
+
+          let tr = e.currentTarget.parentNode.parentNode
+
+          let data = JSON.parse(tr.dataset.row)
+          // console.log(data)
+          if (!confirm(`Tem certeza que deseja excluir o menu ${data.title}?`)) {
+            fetch (`/admin/menus/${data.id}`, {
+              method: "DELETE"
+            }).then(response => {
+              response.json().then(json => {
+                console.log(json)
+                // window.location.reload()
+              })
+            })
+          }
+          
+        })
+      })
+
 
       btnUpdate = [...document.querySelectorAll('.btn-update')]
       btnUpdate.forEach(btn =>{
@@ -193,7 +226,7 @@
           //   return (el.tagName.toUpperCase() == "TR")
           // })
           let data = JSON.parse(tr.dataset.row)
-          console.log(data)
+          // console.log(data)
 
           for (let name in data) {
 

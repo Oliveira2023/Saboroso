@@ -34,17 +34,15 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1.</td>
-                  <td>Hcode</td>
-                  <td>contato@hcode.com.br</td>
-                  <td>Mussum Ipsum, cacilds vidis litro abertis. Manduma pindureta quium dia nois paga. Viva Forevis
-                    aptent taciti sociosqu ad
-                    litora torquent. In elementis mé pra quem é amistosis quis leo. Admodum accumsan disputationi eu
-                    sit. Vide electram sadipscing
-                    et per.</td>
+                <% data.forEach(function(contact) { %>
+                <tr data-contact="<%= JSON.stringify(contact) %>">
+                  <td><%= contact.id %></td>
+                  <td><%= contact.name %></td>
+                  <td><%= contact.email %></td>
+                  <td><%= contact.message %></td>
                   <td><button type="button" class="btn btn-xs btn-danger btn-delete"><i class="fa fa-trash"></i> Excluir</button></td>
                 </tr>
+                <% }) %>
               </tbody>
             </table>
           </div>
@@ -59,3 +57,12 @@
     <!-- Main Footer -->
     <%- include('inc/adm-footer.ejs') -%>
  
+    <script src="/js/hcode-formsave.js"></script>
+    <script src="/js/hcode-grid.js"></script>
+    <script>
+
+      new HcodeGrid({
+        deleteUrl: "/admin/contacts/${data.id}",
+        deletemsg: "Tem certeza que deseja excluir o ${data.name}?",
+      })
+    </script>

@@ -64,10 +64,9 @@ module.exports = {
             `, (err, results)=>{
                 if (err){
                 reject(err)
+                }else{
+                    resolve(results)
                 }
-
-                resolve(results)
-
             });
         });
     },

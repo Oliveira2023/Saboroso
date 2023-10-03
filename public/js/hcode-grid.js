@@ -1,6 +1,7 @@
 
+
 class HcodeGrid {
-     
+    
     constructor(configs){
         
         configs.listeners = Object.assign({
@@ -26,41 +27,53 @@ class HcodeGrid {
         this.options = Object.assign({},{
             formCreate: "#modal-create",
             formUpdate: "#modal-update",
-            btnUpdate: ".btn-update",
-            btnDelete: ".btn-delete",
+            btnUpdate: "btn-update",
+            btnDelete: "btn-delete",
+            onUpdateLoad: (form, name, data)=>{
+                let input = form.querySelector(`[name="${name}"]`)
+                if (input) input.value = data[name]
+            }
         }, configs)
+
+        this.rows = [...document.querySelectorAll("table tbody tr")]
 
         this.initForms()
         this.initButtons()
     }
+
     initForms(){
+
+        let formCreate = document.querySelector(this.options.formCreate);
         
-        this.formCreate = document.querySelector(this.options.formCreate);
+        if (formCreate){
+            
+            formCreate.save({
+                success: ()=>{
+                    this.fireEvent("afterFormCreate")
+                },
+                failure: ()=>{
+                    this.fireEvent("afterFormCreateError")
+                }
+            })
+        }
 
-        this.formCreate.save().then(json=>{
-            this.fireEvent("afterFormCreate")
-
-        }).catch(err=>{
-
-            this.fireEvent("afterFormCreateError")
-
-        })
-      
         this.formUpdate = document.querySelector(this.options.formUpdate);
-      
-        this.formUpdate.save().then(json=>{
 
-            this.fireEvent("afterFormUpdate")
+        if (this.formUpdate){
 
-        }).catch(err=>{
-
-            this.fireEvent("afterFormUpdateError")
-
-        })
+            this.formUpdate.save({
+                success: ()=>{
+                    this.fireEvent("afterFormUpdate")
+                },
+                failure: ()=>{
+                    this.fireEvent("afterFormUpdateError")
+                }
+            })
+        }
     }
 
     fireEvent(name, args){
-        if (typeof this.options.listeners[name] === 'function') this.options.listeners[name].apply(this, args)
+        if (typeof this.options.listeners[name] === 'function') {this.options.listeners[name].apply(this, args)}
     }
 
     getTrData(e){
@@ -71,16 +84,8 @@ class HcodeGrid {
         let data = JSON.parse(tr.dataset.row)
         // console.log(data)
     }
-
-    initButtons(){
-        
-      let btnUpdate = [...document.querySelectorAll(this.options.btnUpdate)]
-      
-      btnUpdate.forEach(btn =>{ 
-        
-        btn.addEventListener("click", (e)=>{
-
-            this.fireEvent("beforeUpdateClick", [e])
+    btnUpdateClick(e){
+        this.fireEvent("beforeUpdateClick", [e])
           // let tr = e.currentTarget.parentNode.parentNode//não encontra o path
           let data = this.getTrData(e)
 
@@ -93,32 +98,41 @@ class HcodeGrid {
           }
           
           this.fireEvent("afterUpdateClick", [e])
-          // let tr = e.path.find(el => {
-          //   return (el.tagName.toUpperCase() == "TR")
-          // })
-          // console.log(tr)
-        })
-      })
-      let btnDelete = [...document.querySelectorAll(this.options.btnDelete)]
-      btnDelete.forEach(btn =>{
-        btn.addEventListener("click", (e)=>{
+    }
+    btnDeleteClick(e){
 
-            this.fireEvent("beforeDeleteClick", [e])
+        this.fireEvent("beforeDeleteClick")
           // let tr = e.currentTarget.parentNode.parentNode//não encontra o path
           let data = this.getTrData(e)
-
-          if (confirm(eval("`" + this.options.msgDelete + "`"))){
+        if (confirm(eval("`" + this.options.DeleteMsg + "`"))){
             fetch(eval("`" + this.options.deleteUrl + "`"),{
               method: "delete"
             }).then(res => res.json())
               .then(json => {
                 // window.location.reload()
                 this.fireEvent("afterDeleteClick")
-                console.log(json)
+                
               })
           }
+    }
 
+    initButtons(){
+
+        this.rows.forEach(row =>{
+            let linha = [...document.querySelectorAll("row")]
+            linha.forEach(btn =>{
+                btn.addEventListener("click", (e)=>{
+                    
+                    if(e.target.classList.contains(this.btnUpdate)){
+                        this.btnUpdateClick(e)
+                    }else if(e.target.classList.contains(this.btnDelete)){
+                        this.btnDeleteClick(e)
+                    }else{
+                        this.fireEvent('bottonClick', [e.target, this.getTrData(e)], e)
+                    }
+                })
+            })
         })
-      })
+        
     }
 }
