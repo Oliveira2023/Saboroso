@@ -98,13 +98,19 @@ router.delete("/emails/:id", function(req, res, next){
 
 router.get('/reservations', function(req, res, next){
 
-    reservations.getReservations().then(data=>{
+    let start = (req.query.start) ? req.query.start : moment().subtract(1,'yar').format('YYYY-MM-DD');
+    let end = (req.query.end) ? req.query.end : moment().format('YYYY-MM-DD');
+    reservations.getReservations(req).then(pag=>{
         
         res.render('admin/reservations', admin.getParams(req, {
             title: 'Reservations - Restaurante Saboroso!',
-            date: {},
-            data,
-            moment
+            date: {
+                start,
+                end
+            },
+            data: pag.data,
+            moment,
+            links: pag.links
         }))
     })
     

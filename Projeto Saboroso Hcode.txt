@@ -31,7 +31,7 @@ npm install express-session --save connect-redis // para criar sessão de login-
  instalação do formidable:
   npm install formidable --save //pra conectar com back end e enviar formulario de criar menu
 
-
+« »
 
 
 	
