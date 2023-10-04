@@ -108,7 +108,7 @@ router.get('/services', function(req, res, next){
   });
   
 })
-reuter.post("/subscribe", function(req, res, next){
+router.post("/subscribe", function(req, res, next){
   
   emails.save(req).then(results=>{
 
