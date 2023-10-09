@@ -52,6 +52,10 @@
           </div>
           <!-- /.box-header -->
           <div class="box-body no-padding">
+            <div style="padding: 10px;">
+              <canvas id="chart" style="height : 250px; background-color: aliceblue;">
+              </canvas>
+            </div>
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
@@ -202,7 +206,9 @@
     <%- include('inc/adm-footer.ejs') -%>
 
     <script src="../js/hcode-formsave.js"></script>
-    <script src="/js/moment.min.js"></script>
+    <script src="/js/moment.min.js"></script> 
+    <script src="../../node_modules/chart.js/dist/chart.umd.js"></script>
+    <!-- \Saboroso\node_modules\chart.js\dist\chart.umd.js -->
     <script src="../js/hcode-grid.js"></script>
     <script>
 
@@ -225,6 +231,58 @@
                 }
             }
           }
+      })
+      let grafico = new Chart(document.getElementById("#chart").getContext("2d"), {
+        type: "line",
+        // data: { //todos estes dados vão pro fetch, apagar tudo quando funcionar
+        //   labels: [//deixar vazio pra vir da query
+        //     'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+        //   ],
+        //   datasets: [{
+        //     data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],//deixar vazio pra vir da query
+        //     label: "Reservas",
+        //     borderColor: "#3c8dbc",
+        //     backgroundColor: "rgb(54, 162, 2)",
+        //     fill: false,
+        //     pointBackgroundColor: "#FFFFFF",
+        //   }]
+        // },
+        options: {
+          tooltipos:{
+            mode:'index',
+            intersect:false
+          },
+          scales: {
+            yAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Reservas'
+              }
+            }],
+            xAxes: [{
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Meses'
+              }
+            }]
+          }
+        }
+      })
+      fetch(`/admin/reservations/chart${window.location.search}`).then(res => res.json()).then(json => {
+        data: {
+          labels: json.months
+          datasets: [{
+            data: json.values,
+            label: "Reservas",
+            borderColor: "#3c8dbc",
+            backgroundColor: "rgb(54, 162, 2)",
+            fill: false,
+            pointBackgroundColor: "#FFFFFF",
+          }]
+        }
+        grafico.update();
       })
     </script>
 

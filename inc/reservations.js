@@ -100,5 +100,37 @@ module.exports = {
                 }
             })
         })
+    },
+    chart(req){
+        return new Promise((resolve, reject)=>{
+            
+            conn.query(`
+                SELECT
+                    CONCAT(YEAR(date), '-', MONTH(date), '-', DAY(date)) AS date,
+                    COUNT(*) AS total
+                    SUM(people) / COUNT(*) AS average
+                FROM tb_reservations
+                WHERE date BETWEEN ? AND ?
+                ORDER BY YEAR(date), MONTH(date) DESC
+                ORDER BY YEAR(date) DESC, MONTH(date) DESC
+            `, [req.query.start, req.query.end], (err, results)=>{
+                if (err){
+                    reject(err)
+                }else{
+                    let months = []
+                    let values = []
+
+                    results.forEach(row=>{
+                        months.push(moment(row.date).format('MMM YYYY'))// 3 ou 2 M?
+                        values.push(row.total)
+                    })
+                    
+                    resolve({
+                        months,
+                        values
+                    })
+                }
+            })
+        })
     }
 }
