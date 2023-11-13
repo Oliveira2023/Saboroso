@@ -6,13 +6,27 @@ var logger = require('morgan');
 var session = require('express-session');
 var redisStore = require('connect-redis')(session);
 var formidable = require('formidable');
-
-var indexRouter = require('./routes/index');
-var adminRouter = require('./routes/admin');
+var http = require('http');
+var socket = require('socket.io');
 
 var app = express();
 
+var http = http.createServer(app);
+var io = socket(http);
+
+io.on('connection', function(socket){
+  console.log("novo usuário conectato")
+  // io.emit('reservations update', {
+  //   date: new Date()
+  // })
+})
+
+var indexRouter = require('./routes/index')(io);
+var adminRouter = require('./routes/admin')(io);
+
 app.use(function(req, res, next){
+
+  req.body = {};
   
   if (req.method === 'post'){
     var form = new formidable.IncomingForm({
@@ -49,7 +63,7 @@ app.use(
 );
 
 app.use(logger('dev'));
-app.use(express.json());
+app.use(express.json());// pediu pra excluir esta linha tambem
 app.use(express.urlencoded({ extended: false }));// pediu pra excluir esta linha, mas não entra no login sem ela, sem req.body
 // https://www.schoolofnet.com/forum/topico/reqbody-retorna-apenas-vazio-5413
 app.use(cookieParser());
@@ -73,5 +87,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+http.listen(3000, function(){
+  console.log('listening on *:3000');
+})
 
-module.exports = app;

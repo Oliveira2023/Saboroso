@@ -8,8 +8,9 @@ var moment = require('moment');
 var contacts = require('../inc/contacts');
 var emails = require('../inc/emails');
 
+module.exports = function(io){
 
-moment.locale('pt-br')
+    moment.locale('pt-br')
 
 router.use(function(req, res, next){
 
@@ -45,8 +46,11 @@ router.get('/', function(req, res, next) {
     }).catch(err=>{
         console.error(err)
     })
-    
-    
+})
+router.get("/dashboard", function(req, res, next){
+    reservations.dashboard().then(data=>{
+        res.send(data)
+    })
 })
 
 router.get('/login', function(req, res, next){
@@ -124,6 +128,7 @@ router.get('/reservations/chart', function(req, res, next){
         res.send(data)
     })
 })
+
 router.post('/reservations', function(req, res, next){
 
     
@@ -165,6 +170,7 @@ router.get('/contacts', function(req, res, next){
 router.delete("/contacts/:id", function(req, res, next){
     contacts.delete(req.params.id).then(results=>{
         res.send(results)
+        io.emit('dashboard update');
     }).catch(err=>{
         res.send(err)
     })
@@ -186,6 +192,7 @@ router.post('/menus', function(req, res, next){
     
     menus.save(req.fields, req.files).then(results=>{
         res.send(results)
+        io.emit('dashboard update');
     }).catch(err=>{
         res.send(err)
     })
@@ -194,6 +201,7 @@ router.post('/menus', function(req, res, next){
 router.delete('/menus/:id', function(req, res, next){
     menus.delete(req.params.id).then(results=>{
         res.send(results)
+        io.emit('dashboard update');
     }).catch(err=>{
         
     })
@@ -212,6 +220,7 @@ router.post('/users', function(req, res, next){
     
     user.save(req.fields).then(results=>{
         res.send(results)
+        io.emit('dashboard update');
     }).catch(err=>{
         res.send(err)
     })
@@ -231,9 +240,11 @@ router.delete('/users:id', function(req, res, next){
     
     user.delete(req.params.id).then(results=>{
         res.send(results)
+        io.emit('dashboard update');
     }).catch(err=>{
         res.send(err)
     })
 })
 
-module.exports = router
+    return router
+}

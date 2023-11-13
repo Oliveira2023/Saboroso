@@ -6,7 +6,9 @@ var reservations = require('../inc/reservations');
 var contacts = require('../inc/contacts');
 var emails = require('../inc/emails');
 
-/* GET home page. */
+module.exports = function(io){
+
+  /* GET home page. */
 router.get('/', function(req, res, next) {
 
   menus.getMenus().then(results=>{
@@ -39,6 +41,8 @@ router.post("/contacts", function(req, res, next){
     contacts.save(req.body).then(results=>{
 
       req.body = {};
+
+      io.emit("reservations update")
       
     contacts.render(req, res, null, 'Mensagem enviada com sucesso!')
 
@@ -89,6 +93,8 @@ router.post("/reservations", function(req, res, next){
     reservations.save(req.body).then(results=>{
 
       req.body = {};
+
+      io.emit("reservations update")
       
       reservations.render(req, res, null, 'Reserva efetuada com sucesso!')
 
@@ -118,5 +124,5 @@ router.post("/subscribe", function(req, res, next){
     res.send(err)
   })
 })
-
-module.exports = router;
+  return router
+};

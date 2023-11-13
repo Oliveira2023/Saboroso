@@ -132,5 +132,24 @@ module.exports = {
                 }
             })
         })
+    },
+    dashboard(){
+
+        return new Promise((resolve, reject)=>{
+            
+            connect.query(`
+            SELECT
+            (SELECT COUNT(*) FROM tb_reservations) AS totalReservations,
+            (SELECT COUNT(*) FROM tb_contacts) AS totalContacts,
+            (SELECT COUNT(*) FROM tb_menus) AS totalMenus,
+            (SELECT COUNT(*) FROM tb_users) AS totalUsers
+        `, (err, results)=>{
+            if (err){
+                reject(err)
+            }else{
+                resolve(results[0])
+            }
+        })
+        })
     }
 }
